@@ -1,0 +1,28 @@
+from transformers import AutoModelForCausalLM, AutoTokenizer
+
+# Load the tokenizer and model
+tokenizer = AutoTokenizer.from_pretrained("google/gemma-2b-it")
+model = AutoModelForCausalLM.from_pretrained("google/gemma-2b-it")
+
+# Define your input prompt
+input_prompt = ("tell me a word that is an emotion ")
+
+# Encode the prompt to tensor of input IDs
+input_ids = tokenizer.encode(input_prompt, return_tensors='pt')
+
+# Generate text with adjusted parameters
+output = model.generate(
+    input_ids,
+    max_length=100,  # Maximum length of the output sequence
+    num_return_sequences=1,  # Number of sequences to generate
+    temperature=0.9,  # Controls randomness. Lower -> more deterministic. Higher -> more diverse.
+    top_k=50,  # Limits generation to top k words. Lower -> more focused. Higher or 0 -> more diverse.
+    top_p=0.95,  # Nucleus sampling. Higher -> more diverse. Lower -> more focused.
+    repetition_penalty=1.2,  # Penalty for repeating words. Higher values discourage repetition.
+)
+
+# Decode the generated text
+generated_text = tokenizer.decode(output[0], skip_special_tokens=True)
+
+# Print the generated text
+print(generated_text)
